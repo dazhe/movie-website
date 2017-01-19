@@ -1,0 +1,30 @@
+{
+  "name": "movie-website",
+  "version": "1.0.0",
+  "description": "express+mongo",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "bower": "^1.8.0",
+    "express": "^4.14.0",
+    "jade": "^1.11.0",
+    "moment": "^2.17.1",
+    "mongoose": "^4.7.2",
+    "pug": "^2.0.0-beta6",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dazhe/movie-website.git"
+  },
+  "author": "sunda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dazhe/movie-website/issues"
+  },
+  "homepage": "https://github.com/dazhe/movie-website#readme"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "moviesite-demo",
+  "homepage": "https://github.com/dazhe/movie-website",
+  "authors": [
+    "sunda"
+  ],
+  "description": "moviesite-imooc",
+  "main": "",
+  "keywords": [
+    "moviesite"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
