@@ -1,12 +1,30 @@
 var express=require('express')
+var cookieParser = require('cookie-parser')
+var cookieSession = require('cookie-session')
+var session = require('express-session')
+var mongoStore=require('connect-mongo')(session)
 var path=require("path")
 var _=require("underscore")
 var mongoose=require("mongoose")
+
 var movie=require("./models/movie.js")
+var User=require("./models/user.js")
+
+var dbURL='mongodb://localhost:27017/imooc'
+
 var bodyParser = require('body-parser')
 var port=process.env.PORT||3000
 var app=express()
-mongoose.connect('mongodb://localhost:27017/imooc')
+app.use(cookieParser())
+app.use(session({
+	secret:'imooc',
+	maxAge: 24 * 60 * 60 * 1000 ,// 24 hours
+	store:new mongoStore({
+		url:dbURL,
+		collection:'sessions'
+	})
+}))
+mongoose.connect(dbURL)
 app.set('views','./views/pages')
 app.set('view engine','pug')
 app.locals.moment=require("moment")
@@ -14,6 +32,92 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static(path.join(__dirname,'public')))
 app.listen(port)
 console.log('now the engine is start!'+port)
+
+
+//pre handle user
+app.use(function(req,res,next){
+	var user=req.session.user
+	if(user){
+		app.locals.user=user
+	}
+	return next()
+})
+//list user
+app.get('/user/list', function (req, res) {
+	User.fetch(function(err,users){
+		if(err){
+			console.log(err)
+		}
+		res.render('userList', {
+        title: 'user 首页',
+        users: users
+    })
+	})
+})
+//user signup
+app.post('/user/signup',function(req,res){
+	var _user=req.body.user
+	//req.param("user")
+	
+
+	User.find({name:_user.name},function(err,user){
+		if(err){
+			console.log(err)
+		}
+		if(user){
+			res.redirect('/')
+		}else{
+			user=new User(_user)
+			user.save(function(err,user){
+				if(err){
+					console.log(err)
+				}
+				res.redirect('/user/list')
+			})
+		}
+	})
+})
+//user logout
+app.get('/logout',function(req,res){
+	delete req.session.user
+	delete app.locals.user
+	res.redirect('/')
+})
+
+
+//user signin
+app.post('/user/signin',function(req,res){
+	var _user=req.body.user
+	//req.param("user")
+	var name=_user.name
+	var pwd=_user.pwd
+
+	User.findOne({name:_user.name},function(err,user){
+		if(err){
+			console.log(err)
+		}
+		if(!user){
+			return res.redirect('/')
+		}else{
+			user.comparePassword(pwd,function(err,isMatch){
+				if(err){
+					console.log(err)
+				}
+				if(isMatch){
+					req.session.user=user
+					return res.redirect('/')
+				}else{
+					console.log('pwd is not matched!!!!!!!')
+				}
+			})
+		}
+	})
+
+	
+})
+
+
+
 
 //index page
 // app.get('/',function(req,res){
@@ -102,6 +206,8 @@ app.post('/admin/movie/new', function(req, res) {
 })
 //index page    这里以及下面皆是路由以及赋值，这里的字段如title, poster等都会在相应的jade如index.jade中用到，实际上是将这里的值传入相应的jade以渲染页面
 app.get('/', function (req, res) {
+	console.log('user is in session')
+	console.log(req.session.user)
 	movie.fetch(function(err,movies){
 		if(err){
 			console.log(err)
