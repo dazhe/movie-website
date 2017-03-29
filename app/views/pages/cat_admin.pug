@@ -1,0 +1,14 @@
+extend ../layout
+
+block content
+	.container
+		.row
+			form.form-horizontal(method="post",action="/admin/catetory")
+				//input(type="hidden",name="cat[_id]",value=cat._id)
+				.form-group
+					label.col-sm-2.control-label(for="inputcat") mingcheng
+					.col-sm-10
+						input#inputcat.col-sm-10.form-control(type="text",name="cat[name]" value=cat.name)
+				.form-group
+					.col-sm-offeset-2.col-sm-10
+						button.btn.btn-default(type="submint") 录入
